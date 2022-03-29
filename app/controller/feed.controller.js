@@ -5,18 +5,16 @@ let parser = new Parser();
 exports.getFeed = async (req, res) => {
     let result = [];
     let promises = feeds.map(async feed => {
-        let toto = await parseFeed(feed);
-        toto.forEach(t => {
+        let data = await parseFeed(feed);
+        data.forEach(t => {
             result.push(t);
         })
         return null;
     })
     await Promise.all(promises);
+    result = sortArticles(result);
+    console.log(result);
     res.send(result);
-    /* feeds.forEach(async feed => {
-        let toto = await parseFeed(feed);
-        console.log(toto)
-    }); */
 }
 
 async function parseFeed(feed) {
@@ -32,4 +30,11 @@ async function parseFeed(feed) {
         }
     });
     return articles
+}
+
+function sortArticles(articles){
+    articles.sort(function(a,b){
+        return Number(new Date(b.date)) - Number(new Date(a.date));
+    });
+    return articles;
 }
