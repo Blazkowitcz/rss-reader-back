@@ -13,7 +13,6 @@ exports.getFeed = async (req, res) => {
     })
     await Promise.all(promises);
     result = sortArticles(result);
-    console.log(result);
     res.send(result);
 }
 
@@ -22,8 +21,14 @@ async function parseFeed(feed) {
     let data = await parser.parseURL(feed.url);
     data.items.forEach(item => {
         let img = "https://le-blog-du-geek.webnode.fr/_files/200000005-aab68abb1a/GEEK.jpg";
-        if(item.enclosure !== undefined){
+        if (item.enclosure !== undefined) {
             img = item.enclosure.url
+        } else {
+            let myRegex = /<img[^>]+src="(https:\/\/[^">]+)"/g;
+            let image_string = myRegex.exec(item.content);
+            if (image_string !== null) {
+                img = image[1];
+            }
         }
         if (item.title !== undefined) {
             articles.push({ title: item.title, link: item.link, content: item.contentSnippet, date: item.isoDate, image: img });
@@ -32,8 +37,8 @@ async function parseFeed(feed) {
     return articles
 }
 
-function sortArticles(articles){
-    articles.sort(function(a,b){
+function sortArticles(articles) {
+    articles.sort(function (a, b) {
         return Number(new Date(b.date)) - Number(new Date(a.date));
     });
     return articles;
