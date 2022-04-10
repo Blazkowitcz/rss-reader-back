@@ -27,7 +27,7 @@ async function parseFeed(feed) {
             let myRegex = /<img[^>]+src="(https:\/\/[^">]+)"/g;
             let image_string = myRegex.exec(item.content);
             if (image_string !== null) {
-                img = image[1];
+                img = image_string[1];
             }
         }
         if (item.title !== undefined) {
